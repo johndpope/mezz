@@ -1,0 +1,59 @@
+/*
+ * This protobuf defines extra data that is stored with payment channels used by Stroem
+ * (This is in addition to that stored in the wallet protobuf, which is 'owned' by bitcoinj)
+ *
+ * It should be possible for a wallet developer to convert the Stroem channel data to bytes
+ * using these proto classes, and store it as an extension in the wallet.
+ * See MultiBitHD source code for an example of this.
+ *
+ * NOTE: miner_fee is important since bitcoinj cannot figure this out from the tx yet.
+ */
+
+/* Notes:
+ * - To regenerate after editing, run ...
+ */
+
+option java_package = "com.sekoor.proto";
+option java_outer_classname = "SekoorMessageProtos";
+
+
+/**
+ * Sent by Sekoor client to server.
+ */
+message GetStatusProto {
+    required string user = 1;                       // Which user the server should fetch status for
+}
+
+/**
+ * Reply from server when client sends GetStatusProto.
+ */
+message StatusProto {
+    required string user = 1;                       // Which user we are talking about
+    required int64 balance = 2;                     // The bitcoin balance of this account (in Satoshi)
+    repeated MessageProto messages = 3;             // All unread messages
+    optional int64 creation_time = 4;               // The number of milliseconds since 1970-01-01
+}
+
+/**
+ * Holds the encrypted message, sent between the Sekoor client and the Sekoor server
+ */
+message MessageProto {
+    // Required fields
+    required string receiver = 1;                   // The receiver of the message
+    required string sender = 2;                     // The sender of the message
+    required string hash = 3;                       // The hash of the (encrypted) message
+    required bytes message = 4;                     // The (encrypted) message
+    // Optional fields
+    optional int64 fee = 5;                         // The number of Satoshis (Bitcoin) paid in fee
+    optional int64 creation_time = 6;               // The number of milliseconds since 1970-01-01
+}
+
+/**
+ *
+ */
+message AckProto {
+    required string error_code = 1;                 // OK = no problem. All other codes means there some sort of problem with delivering the message.
+    optional string error_description = 2;          //
+}
+
+

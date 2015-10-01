@@ -1,24 +1,38 @@
-package com.sekoor.client;
+package com.sekoor.client.gui;
 
+import com.sekoor.client.KeybaseConnector;
+import com.sekoor.client.domain.Contact;
+import com.sekoor.client.gui.Main;
 import com.sekoor.client.gui.Message;
 import javafx.animation.*;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressBar;
+import javafx.event.EventHandler;
+import javafx.event.EventTarget;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import com.sekoor.client.gui.controls.ClickableBitcoinAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.math.BigInteger;
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static javafx.beans.binding.Bindings.isNull;
@@ -28,7 +42,9 @@ import static com.sekoor.client.gui.utils.GuiUtils.*;
  * Gets created auto-magically by FXMLLoader via reflection. The widget fields are set to the GUI controls they're named
  * after. This class handles all the updates and event handling for the main UI.
  */
-public class Controller {
+public class Controller implements EventHandler<ActionEvent> {
+    private final static Logger log = LoggerFactory.getLogger(Controller.class);
+
     public ProgressBar progressBar;
     public Label progressBarLabel;
     public VBox syncBox;
@@ -37,10 +53,19 @@ public class Controller {
     public Button sendMoneyOutBtn;
     public ClickableBitcoinAddress addressControl;
 
-    // PayFile specific stuff
+    @FXML protected BorderPane mainBorderPane;
+    @FXML protected Button writeMessageBtn = new Button(""); // No contact clicked yet
+    private String currentContact = null;
+
+    // Sekoor specific stuff
     public Button downloadBtn, cancelBtn;
-    public ListView<Message> messagesList;
+
+    public ListView<String> contactListView;
+    private ObservableList<String> contacts;
+
+    public ListView<Message> messageList;
     private ObservableList<Message> messages;
+
     private ReadOnlyObjectProperty<Message> selectedMessages;
 
     // Called by FXMLLoader.
@@ -51,16 +76,23 @@ public class Controller {
 
         // The SekoorClient.File.toString() method is good enough for rendering list cells for now.
         messages = FXCollections.observableArrayList();
-        messagesList.setItems(messages);
-        selectedMessages = messagesList.getSelectionModel().selectedItemProperty();
+
+        contacts = FXCollections.observableArrayList();
+        List<String> mainsContactList = Main.instance.getContacts();
+        contacts.addAll(mainsContactList);
+        contactListView.setItems(contacts);
+        contactListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+        //selectedMessages = messageList.getSelectionModel().selectedItemProperty();
+
         // Don't allow the user to press download unless an item is selected.
-        downloadBtn.disableProperty().bind(isNull(selectedMessages));
+        //downloadBtn.disableProperty().bind(isNull(selectedMessages));
     }
 
 
     public void onBitcoinSetup() {
         addressControl.setAddress("1Jpm2ibWaMwDJn8PgvyrgVCVr9sHTR3KfA");
-        refreshBalanceLabel();
+        //refreshBalanceLabel();
     }
 
     public void sendMoneyOut(ActionEvent event) {
@@ -79,9 +111,65 @@ public class Controller {
         Main.instance.overlayUI("connect_server.fxml");
     }
 
+    public void download(ActionEvent event) throws Exception {
+        // Nothing
+    }
 
 
-    public void fileEntryClicked(MouseEvent event) throws Exception {
+    public void writeMessage(ActionEvent event) throws Exception {
+
+
+    }
+
+
+    public void contactEntryClicked(MouseEvent event) throws Exception {
+        log.debug("contact clicked");
+        if (event.getButton() == MouseButton.PRIMARY ) {
+             if (event.getClickCount() == 2) {
+                 // Double click on a contact: shortcut for write message
+             } else {
+                 // Single click: show conversation list
+                 Object target = event.getTarget();
+                 if (target instanceof Text) {
+                     Text contactText = (Text) event.getTarget();
+                     currentContact = contactText.getText();
+                     System.out.println("res =" + currentContact);
+                     writeMessageBtn.setText("Write to " + currentContact);
+                     writeMessageBtn.setDefaultButton(true);
+                     writeMessageBtn.setOnAction(this);
+
+                     HBox buttonBox = new HBox();
+                     buttonBox.setSpacing(10.0);
+                     buttonBox.setPadding(new Insets(10, 10, 10, 10));
+                     buttonBox.getChildren().add(writeMessageBtn);
+                     mainBorderPane.setTop(buttonBox);
+                 } else {
+                     String msg = "What is this click? :" + target;
+                     log.warn(msg);
+                     System.out.println(msg);
+                 }
+             }
+        }
+    }
+
+
+    public void handle(ActionEvent event) {
+        // As of now, this can only be writeMessage click
+
+
+        if (currentContact == null) {
+            throw new IllegalStateException("Programming error: no currentContact");
+        }
+
+        Pane ui = Main.instance.new600x800Window("edit_message.fxml");
+
+
+        //fadeOut(Main.instance.mainUI);
+        //Main.instance.overlayUI("edit_message.fxml");
+    }
+
+
+    public void messageEntryClicked(MouseEvent event) throws Exception {
         if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
             // Double click on a file: shortcut for downloading.
             decryptMessage(null);

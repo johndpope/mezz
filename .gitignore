@@ -14,6 +14,7 @@ project/plugins/project/
 
 # IDE specific
 .idea
+.iml
 projectFilesBackup/
 .idea_modules/
 *.spvchain

@@ -1,8 +1,15 @@
-package com.sekoor.client;
+package com.sekoor.client.gui;
 
 
 import com.google.common.net.HostAndPort;
+import com.sekoor.client.FileSystemHandler;
+import com.sekoor.client.KeybaseConnector;
+import com.sekoor.client.SekoorClient;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -10,9 +17,16 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import com.sekoor.client.gui.utils.TextFieldValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static com.sekoor.client.gui.utils.GuiUtils.*;
@@ -42,7 +56,9 @@ import static com.sekoor.client.utils.Exceptions.runUnchecked;
 
 
 public class Main extends Application {
-    public static final String APP_NAME = "PayFile";
+    private final static Logger log = LoggerFactory.getLogger(Main.class);
+
+    public static final String APP_NAME = "SekoorBox";
     public static final int CONNECT_TIMEOUT_MSEC = 2000;
 
 
@@ -51,10 +67,16 @@ public class Main extends Application {
     public static HostAndPort serverAddress;
     private static String filePrefix;
 
+    private List<String> contacts;
+
     private StackPane uiStack;
     public Pane mainUI;
     public Controller controller;
     public Stage mainWindow;
+
+    public List<String> getContacts() {
+        return contacts;
+    }
 
     @Override
     public void start(Stage mainWindow) throws Exception {
@@ -64,12 +86,17 @@ public class Main extends Application {
         try {
             init(mainWindow);
         } catch (Throwable t) {
-            throw t;
+            log.error("Error during init: " + t.getMessage());
+            crashAlert(t);
         }
     }
 
-    private void init(Stage mainWindow) throws IOException {
+    private void init(Stage mainWindow) throws IOException, InterruptedException  {
         this.mainWindow = mainWindow;
+
+        // Get the contacts
+        contacts = KeybaseConnector.getContacts();
+        FileSystemHandler.buildFoldersIfNeeded(contacts, FileSystemHandler.baseDir);
 
         // Load the GUI. The Controller class will be automagically created and wired up.
         URL location = getClass().getResource("main.fxml");
@@ -85,11 +112,15 @@ public class Main extends Application {
 
 
         controller.onBitcoinSetup();
-        
-        overlayUI("connect_server.fxml");
-        mainUI.setVisible(false);
+
+
+
+
+        //overlayUI("connect_server.fxml");
+        mainUI.setVisible(true);
         mainWindow.show();
     }
+
 
     public class OverlayUI<T> {
         public Node ui;
@@ -113,6 +144,21 @@ public class Main extends Application {
             this.ui = null;
             this.controller = null;
         }
+    }
+
+    public Pane new600x800Window(String name) {
+        return evalUnchecked(() -> {
+            checkGuiThread();
+            URL location = getClass().getResource(name);
+            FXMLLoader loader = new FXMLLoader(location);
+            Pane ui = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Write Message");
+            stage.setScene(new Scene(ui, 800, 600));
+            stage.show();
+            return ui;
+        });
     }
 
     public <T> OverlayUI<T> overlayUI(Node node, T controller) {

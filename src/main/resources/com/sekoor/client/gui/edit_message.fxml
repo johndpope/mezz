@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<?import javafx.scene.web.HTMLEditor?>
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="com.sekoor.client.gui.EditMessageController">
+    <top>
+        <VBox>
+            <children>
+                <BorderPane>
+                    <left>
+                        <Label fx:id="receiverLabel" text="Receivers: "  style="-fx-font-weight: bold; -fx-label-padding: 10 10 10 10;" />
+                    </left>
+                    <center>
+                        <ListView fx:id="contactsListView"  prefHeight="30.0" orientation="HORIZONTAL" onMouseClicked="#contactClicked"  style="" editable="false" />
+                    </center>
+                    <right>
+                        <HBox spacing="10.0">
+                            <children>
+                                <!--Label fx:id="addContactLabel" text="Add receiver: "  style="-fx-font-weight: bold; -fx-label-padding: 10 10 10 10;" /-->
+                                <ComboBox fx:id="newContactCombo" prefWidth="200.0" VBox.vgrow="NEVER" promptText="Add Receiver" onAction="#addReceiver" xmlns:fx="http://javafx.com/fxml">
+                                    <HBox.margin>
+                                        <Insets left="10.0" right="10.0" top="10.0" bottom="10.0" />
+                                    </HBox.margin>
+                                </ComboBox>
+                            </children>
+                        </HBox>
+                    </right>
+                </BorderPane>
+                <BorderPane>
+                    <left>
+                        <Label fx:id="topicLabel" text="Topic: " style="-fx-font-weight: bold; -fx-label-padding: 10 10 10 10;" />
+                    </left>
+                    <center>
+                        <TextField id="topic" fx:id="topicField"  promptText="Topic" >
+                            <VBox.margin>
+                                <Insets left="10.0" right="10.0" top="10.0" bottom="10.0" />
+                            </VBox.margin>
+                        </TextField>
+                    </center>
+                    <right>
+                        <Label fx:id="noLabel" text=" " style="-fx-font-weight: bold; -fx-label-padding: 10 10 10 10;" />
+                    </right>
+                </BorderPane>
+            </children>
+        </VBox>
+    </top>
+    <center>
+        <HTMLEditor fx:id="htmlEditor" >
+        </HTMLEditor>
+    </center>
+    <bottom>
+        <BorderPane>
+            <center>
+                <TextArea id="log" fx:id="logArea"  promptText=""  prefHeight="100.0" prefWidth="600.0"  >
+                    <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="10.0" bottom="10.0" />
+                    </VBox.margin>
+                </TextArea>
+            </center>
+            <right>
+                <HBox alignment="CENTER_RIGHT" spacing="0.0" >
+                    <children>
+                        <Button id="cancel" fx:id="cancelBtn" defaultButton="false" disable="false" mnemonicParsing="false" onAction="#cancel" prefWidth="79.0" text="Cancel" >
+                            <HBox.margin>
+                                <Insets left="10.0" right="10.0" top="10.0" bottom="10.0" />
+                            </HBox.margin>
+                        </Button>
+                        <Button id="encrypt" fx:id="encryptBtn" defaultButton="false" disable="false" mnemonicParsing="false" onAction="#encrypt" prefWidth="79.0" text="Encrypt" >
+                            <HBox.margin>
+                                <Insets left="10.0" right="10.0" top="10.0" bottom="10.0" />
+                            </HBox.margin>
+                        </Button>
+                        <Button id="send" fx:id="sendBtn" defaultButton="false" disable="true" mnemonicParsing="false" onAction="#send" prefWidth="79.0" text="Send" >
+                            <HBox.margin>
+                                <Insets left="10.0" right="20.0" top="10.0" bottom="10.0" />
+                            </HBox.margin>
+                        </Button>
+                    </children>
+                </HBox>
+            </right>
+        </BorderPane>
+    </bottom>
+</BorderPane>

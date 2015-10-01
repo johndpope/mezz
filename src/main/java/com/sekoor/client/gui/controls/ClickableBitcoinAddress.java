@@ -23,7 +23,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import net.glxn.qrgen.QRCode;
 import net.glxn.qrgen.image.ImageType;
-import com.sekoor.client.Main;
+import com.sekoor.client.gui.Main;
 import com.sekoor.client.gui.utils.GuiUtils;
 
 import java.awt.*;
@@ -37,7 +37,7 @@ import java.net.URI;
 //
 // From the java directory:
 //
-// javac -cp $HOME/.m2/repository/com/google/bitcoinj/0.11-SNAPSHOT/bitcoinj-0.11-SNAPSHOT.jar:$HOME/.m2/repository/net/glxn/qrgen/1.3/qrgen-1.3.jar:$HOME/.m2/repository/de/jensd/fontawesomefx/8.0.0/fontawesomefx-8.0.0.jar:../../../target/classes -d ../../../target/classes/ -source 1.7 -target 1.7 net/plan99/payfile/gui/controls/ClickableBitcoinAddress.java
+// javac -cp $HOME/.m2/repository/com/google/bitcoinj/0.11-SNAPSHOT/bitcoinj-0.11-SNAPSHOT.jar:$HOME/.m2/repository/net/glxn/qrgen/1.3/qrgen-1.3.jar:$HOME/.m2/repository/de/jensd/fontawesomefx/8.0.0/fontawesomefx-8.0.0.jar:../../../target/classes -d ../../../target/classes/ -source 1.7 -target 1.7 com/sekoor/client/gui/controls/ClickableBitcoinAddress.java
 
 
 /**
