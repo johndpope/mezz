@@ -1,6 +1,6 @@
 # mezz
 
-An application for sending and receiving encrypted messages to keybase users
+An application for sending and receiving encrypted messages for Keybase users
 
 ## Are you a Keybase user?
 
