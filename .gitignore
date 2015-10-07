@@ -1,5 +1,6 @@
 *.class
 *.log
+*.iml
 
 # sbt specific
 .cache/
@@ -14,7 +15,6 @@ project/plugins/project/
 
 # IDE specific
 .idea
-.iml
 projectFilesBackup/
 .idea_modules/
 *.spvchain
